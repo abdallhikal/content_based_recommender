@@ -1,6 +1,8 @@
+#import necessary libs  
 from api_rec import db, login_manager
 from flask_login import UserMixin
 
+#a loader function that get the user form the database 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
@@ -8,8 +10,8 @@ def load_user(user_id):
 class Data(db.Model):
     '''get data of user save it in (data) 
     and save the vectorizor in (data_mat)'''
-    id = db.Column(db.Integer, primary_key=True)
-    data = db.Column(db.PickleType, nullable=False)
+    id = db.Column(db.Integer, primary_key=True) #integer field
+    data = db.Column(db.PickleType, nullable=False) #pickleType field 
     data_mat = db.Column(db.PickleType, nullable=False)
     model_mat = db.Column(db.PickleType)
     data_name = db.Column(db.String(150), nullable=False, unique=True)
