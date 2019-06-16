@@ -1,3 +1,4 @@
+#import the required packages 
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField
 from wtforms.fields.html5 import EmailField
@@ -9,23 +10,23 @@ from werkzeug.utils import secure_filename
 from flask_uploads import DATA, UploadSet
 import re
 
-
+#build an egyption phone number validator 
 def my_val(form, field):
     
     if field.data[:2] != '01' :
         raise ValidationError('Egyptain Phone Number Please')
     if len(field.data) != 11 :
         raise ValidationError('not real numbe')
-
+#a validator that make the user input at least 3 charchters 
 def space_re(form, field):
     data = field.data.lstrip()
     if len(data) < 3 :
-        raise ValidationError('Recuired att least 3 letters')
+        raise ValidationError('Recuired at least 3 letters')
 
     return field.data
 
 
-
+#the form of registration
 class RegistrationForm(FlaskForm):
     username = StringField('Username',
                            validators=[DataRequired(), 
@@ -39,7 +40,7 @@ class RegistrationForm(FlaskForm):
     confirm_password = PasswordField('Confirm Password',
                                      validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('Sign Up')
-
+    #defie inline validator 
     def validate_username(self, username):
         user = User.query.filter_by(username=username.data).first()
         if user:
@@ -56,7 +57,7 @@ class RegistrationForm(FlaskForm):
             raise ValidationError('That phone is taken. Please choose a different one.')
 
 
-
+#the log in form 
 class LoginForm(FlaskForm):
     email = StringField('Email',
                         validators=[DataRequired(), Email()])
@@ -64,7 +65,7 @@ class LoginForm(FlaskForm):
     Length(min=8, max=30)])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
-
+#update the account form 
 class UpdateAccountForm(FlaskForm):
     username = StringField('Username',
                            validators=[DataRequired(), 
@@ -91,7 +92,7 @@ class UpdateAccountForm(FlaskForm):
 
 data = UploadSet('data', DATA)
 
-
+#define the project forms 
 class PostForm(FlaskForm):
     name = StringField('Name',validators=[DataRequired(),
     space_re])
@@ -104,7 +105,7 @@ class PostForm(FlaskForm):
         if data :
             raise ValidationError('That name is taken. Please choose a different one.')
 
-
+#update the projects forms 
 class UpdataPostForm(FlaskForm):
     name = StringField('Name',validators=[DataRequired(),
     space_re])
