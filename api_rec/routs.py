@@ -1,3 +1,4 @@
+#import necessary packages 
 from flask import request, jsonify, abort, render_template
 from api_rec.models import User, Data
 from api_rec import app, db, bcrypt, jwt
@@ -35,7 +36,9 @@ def factorization(data):
 
 
 def get_closest_movies(name, num_rec, data_name):
-
+    """ this function make it easy for the user to define the best n items for there clients here we get the model from the 
+        database and the vectorization matrix and apply it for the user data and feed it to the model then rank the predictions
+        and retun the n  items """
     quer = Data.query.filter_by(data_name=data_name).first() #get data query 
     nbrs = quer.model_mat
     data = quer.data_mat
@@ -74,7 +77,7 @@ def predict():
 
     except:
         return ("Error")'''
-
+#make predictions api 
 @app.route('/pred',methods=['GET'])
 #@jwt_required
 def pred():
@@ -84,6 +87,7 @@ def pred():
        third form the npArray as json and return it '''
     try :
         try:
+            #get the request data as python dic and then define each variable 
             dico = request.args.to_dict() #frist 
             mid = int(dico['movie_id'])
             num_rec = int(dico['num_rec'])
@@ -91,6 +95,7 @@ def pred():
             try:
                  #scound
                 #closest_movies_json = closest_movies.to_json(orient="records") #third 
+                #return the n best recommendations for the user 
                 return get_closest_movies(mid, num_rec, data_name) 
                 
 
@@ -103,6 +108,7 @@ def pred():
     except:
         return jsonify({'trace': traceback.format_exc()})     
 
+#this function get the data from the user and save it in the data base wih its factorized matrix 
 @app.route('/get_data_from_project_user', methods=['POST'])
 @jwt_required
 def get_data():
@@ -199,7 +205,7 @@ def protected():
         data_name.append(i.data_name)
     data_name = tuple(data_name)
     return jsonify(data_name)
-
+#update the user data 
 @app.route('/update_data_admin', methods=['get'])
 @jwt_required
 def update_data_admin():    
@@ -222,35 +228,3 @@ def update_data_admin():
     except:
 
         return jsonify({'trace': traceback.format_exc()})    
-
-'''
-@app.route('/')
-@app.route('/home')
-def home():
-    return render_template('home.html')
-
-@app.route("/about")
-def about():
-    return render_template('about.html', title='About')
-
-
-#regist the the user 
-@app.route('/register', methods=['GET','POST'])
-def registeration():
-    form = RegistrationForm()
-
-    return render_template('register.html', title='Register', form=form)
-
-#log in function
-@app.route('/login',methods=['GET','POST'])
-def log_in():
-    form = LoginForm()
-
-    return render_template('login.html', title='Login', form=form)
-
-
-#log out function
-@app.route('/logout', methods=['GET','POST'])
-def log_out(): 
-    return jsonify({'success':'access is conformatife'})
-'''
